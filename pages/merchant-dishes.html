@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜品管理 - 商家端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .merchant-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .merchant-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .merchant-nav-menu {
+            font-size: 20px;
+        }
+        
+        .merchant-tabs {
+            display: flex;
+            background-color: white;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+            border-bottom: 1px solid #eee;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .merchant-tab {
+            padding: 15px;
+            color: var(--dark-gray);
+            position: relative;
+            font-size: 14px;
+        }
+        
+        .merchant-tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .merchant-tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .merchant-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .merchant-bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--dark-gray);
+        }
+        
+        .merchant-bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .merchant-bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .merchant-bottom-nav-text {
+            font-size: 12px;
+        }
+        
+        .dish-card {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+        }
+        
+        .dish-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        
+        .dish-info {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .dish-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .dish-desc {
+            color: var(--dark-gray);
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .dish-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .dish-sales {
+            color: var(--dark-gray);
+            font-size: 12px;
+        }
+        
+        .dish-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .dish-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+        
+        .dish-action:last-child {
+            margin-bottom: 0;
+        }
+        
+        .dish-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .dish-status.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .add-dish-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 90;
+        }
+        
+        .dish-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+            color: var(--dark-gray);
+        }
+        
+        .dish-empty i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--medium-gray);
+        }
+        
+        .dish-category-header {
+            padding: 15px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dish-category-action {
+            color: var(--primary-color);
+            font-size: 14px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 商家导航栏 -->
+    <div class="merchant-nav-bar">
+        <div class="merchant-nav-title">菜品管理</div>
+        <div class="merchant-nav-menu">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+
+    <!-- 菜品分类标签页 -->
+    <div class="merchant-tabs">
+        <div class="merchant-tab active">全部</div>
+        <div class="merchant-tab">热销</div>
+        <div class="merchant-tab">套餐</div>
+        <div class="merchant-tab">川菜</div>
+        <div class="merchant-tab">湘菜</div>
+        <div class="merchant-tab">小吃</div>
+        <div class="merchant-tab">饮料</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content" style="margin-bottom: 60px;">
+        <!-- 热销分类 -->
+        <div class="dish-category">
+            <div class="dish-category-header">
+                热销
+                <span class="dish-category-action">管理分类</span>
+            </div>
+            <div class="dish-list p-3">
+                <!-- 菜品1 -->
+                <div class="dish-card position-relative">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="dish-image" alt="菜品图片">
+                    <div class="dish-info">
+                        <div>
+                            <div class="dish-title">麻婆豆腐</div>
+                            <div class="dish-desc">香辣可口，口感丰富，采用优质豆腐和特制辣椒酱</div>
+                        </div>
+                        <div>
+                            <div class="dish-price">¥28</div>
+                            <div class="dish-sales">月售300+</div>
+                        </div>
+                    </div>
+                    <div class="dish-actions">
+                        <div class="dish-action">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="dish-action">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="dish-status active">上架中</div>
+                </div>
+
+                <!-- 菜品2 -->
+                <div class="dish-card position-relative">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="dish-image" alt="菜品图片">
+                    <div class="dish-info">
+                        <div>
+                            <div class="dish-title">水煮鱼片</div>
+                            <div class="dish-desc">新鲜鱼片，配以特制麻辣汤底，鲜香麻辣</div>
+                        </div>
+                        <div>
+                            <div class="dish-price">¥58</div>
+                            <div class="dish-sales">月售250+</div>
+                        </div>
+                    </div>
+                    <div class="dish-actions">
+                        <div class="dish-action">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="dish-action">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="dish-status active">上架中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 套餐分类 -->
+        <div class="dish-category">
+            <div class="dish-category-header">
+                套餐
+                <span class="dish-category-action">管理分类</span>
+            </div>
+            <div class="dish-list p-3">
+                <!-- 菜品1 -->
+                <div class="dish-card position-relative">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="dish-image" alt="菜品图片">
+                    <div class="dish-info">
+                        <div>
+                            <div class="dish-title">川湘双人套餐</div>
+                            <div class="dish-desc">麻婆豆腐+水煮鱼片+米饭2份，优惠组合</div>
+                        </div>
+                        <div>
+                            <div class="dish-price">¥88</div>
+                            <div class="dish-sales">月售150+</div>
+                        </div>
+                    </div>
+                    <div class="dish-actions">
+                        <div class="dish-action">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="dish-action">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="dish-status active">上架中</div>
+                </div>
+
+                <!-- 菜品2 -->
+                <div class="dish-card position-relative">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="dish-image" alt="菜品图片">
+                    <div class="dish-info">
+                        <div>
+                            <div class="dish-title">麻辣三人套餐</div>
+                            <div class="dish-desc">辣子鸡+水煮鱼片+麻婆豆腐+米饭3份</div>
+                        </div>
+                        <div>
+                            <div class="dish-price">¥128</div>
+                            <div class="dish-sales">月售120+</div>
+                        </div>
+                    </div>
+                    <div class="dish-actions">
+                        <div class="dish-action">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="dish-action">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="dish-status">已下架</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 川菜分类 -->
+        <div class="dish-category">
+            <div class="dish-category-header">
+                川菜
+                <span class="dish-category-action">管理分类</span>
+            </div>
+            <div class="dish-list p-3">
+                <!-- 菜品1 -->
+                <div class="dish-card position-relative">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="dish-image" alt="菜品图片">
+                    <div class="dish-info">
+                        <div>
+                            <div class="dish-title">回锅肉</div>
+                            <div class="dish-desc">精选五花肉，回锅炒制，香而不腻</div>
+                        </div>
+                        <div>
+                            <div class="dish-price">¥42</div>
+                            <div class="dish-sales">月售180+</div>
+                        </div>
+                    </div>
+                    <div class="dish-actions">
+                        <div class="dish-action">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="dish-action">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="dish-status active">上架中</div>
+                </div>
+
+                <!-- 菜品2 -->
+                <div class="dish-card position-relative">
+                    <img src="https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="dish-image" alt="菜品图片">
+                    <div class="dish-info">
+                        <div>
+                            <div class="dish-title">辣子鸡</div>
+                            <div class="dish-desc">鲜嫩鸡肉，配以干辣椒爆炒，麻辣鲜香</div>
+                        </div>
+                        <div>
+                            <div class="dish-price">¥48</div>
+                            <div class="dish-sales">月售200+</div>
+                        </div>
+                    </div>
+                    <div class="dish-actions">
+                        <div class="dish-action">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="dish-action">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="dish-status active">上架中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空菜品状态 (默认隐藏) -->
+        <div class="dish-empty" style="display: none;">
+            <i class="fas fa-utensils"></i>
+            <p>暂无菜品，点击下方按钮添加</p>
+        </div>
+
+        <!-- 添加菜品按钮 -->
+        <div class="add-dish-btn">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="merchant-bottom-nav">
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">订单</div>
+        </div>
+        <div class="merchant-bottom-nav-item active">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">菜品</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">数据</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.merchant-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.merchant-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加切换菜品列表的逻辑
+            });
+        });
+        
+        // 底部导航切换
+        document.querySelectorAll('.merchant-bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.merchant-bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加页面跳转逻辑
+                const index = Array.from(document.querySelectorAll('.merchant-bottom-nav-item')).indexOf(this);
+                if (index === 0) {
+                    window.location.href = 'merchant-orders.html';
+                } else if (index === 1) {
+                    window.location.href = 'merchant-dishes.html';
+                } else if (index === 2) {
+                    window.location.href = 'merchant-stats.html';
+                } else if (index === 3) {
+                    window.location.href = 'merchant-profile.html';
+                }
+            });
+        });
+        
+        // 添加菜品按钮点击
+        document.querySelector('.add-dish-btn').addEventListener('click', function() {
+            // 这里可以添加跳转到添加菜品页面的逻辑
+            alert('跳转到添加菜品页面');
+        });
+        
+        // 编辑菜品按钮点击
+        document.querySelectorAll('.dish-action').forEach(action => {
+            action.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('fa-edit')) {
+                    // 编辑菜品
+                    alert('编辑菜品');
+                } else if (icon.classList.contains('fa-trash-alt')) {
+                    // 删除菜品
+                    if (confirm('确定要删除这个菜品吗？')) {
+                        alert('菜品已删除');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

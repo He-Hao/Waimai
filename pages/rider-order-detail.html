@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情 - 骑手端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .rider-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .rider-nav-left {
+            font-size: 20px;
+        }
+        
+        .rider-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .rider-nav-right {
+            font-size: 20px;
+        }
+        
+        .rider-detail-section {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .rider-detail-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .rider-detail-body {
+            padding: 15px;
+        }
+        
+        .rider-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .rider-status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .rider-status-info {
+            flex: 1;
+        }
+        
+        .rider-status-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .rider-status-desc {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-route {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .rider-route-icons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .rider-route-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .rider-route-icon.pickup {
+            background-color: var(--primary-color);
+        }
+        
+        .rider-route-icon.delivery {
+            background-color: #28a745;
+        }
+        
+        .rider-route-line {
+            width: 2px;
+            height: 30px;
+            background-color: #ddd;
+            margin: 5px 0;
+        }
+        
+        .rider-route-info {
+            flex: 1;
+        }
+        
+        .rider-route-address {
+            margin-bottom: 15px;
+        }
+        
+        .rider-route-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .rider-route-text {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-route-distance {
+            color: var(--dark-gray);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .rider-route-action {
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+        
+        .rider-map {
+            height: 200px;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-gray);
+        }
+        
+        .rider-order-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .rider-order-info-label {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-order-info-value {
+            font-size: 14px;
+        }
+        
+        .rider-order-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .rider-order-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .rider-order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .rider-order-item-info {
+            flex: 1;
+        }
+        
+        .rider-order-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .rider-order-item-price {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-order-item-quantity {
+            color: var(--dark-gray);
+            font-size: 14px;
+            text-align: right;
+        }
+        
+        .rider-order-total {
+            display: flex;
+            justify-content: flex-end;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        
+        .rider-order-total span {
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+        
+        .rider-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .rider-action-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .rider-action-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .rider-action-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .rider-confirm-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .rider-progress {
+            margin-top: 15px;
+        }
+        
+        .rider-progress-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .rider-progress-steps:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            width: 2px;
+            background-color: var(--medium-gray);
+            z-index: 0;
+        }
+        
+        .rider-progress-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .rider-step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .rider-step-icon.active {
+            background-color: var(--primary-color);
+        }
+        
+        .rider-step-content {
+            flex: 1;
+        }
+        
+        .rider-step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .rider-step-time {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 骑手导航栏 -->
+    <div class="rider-nav-bar">
+        <div class="rider-nav-left">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="rider-nav-title">订单详情</div>
+        <div class="rider-nav-right">
+            <i class="fas fa-ellipsis-h"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content p-3">
+        <!-- 订单状态 -->
+        <div class="rider-detail-section">
+            <div class="rider-detail-body">
+                <div class="rider-status">
+                    <div class="rider-status-icon">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="rider-status-info">
+                        <div class="rider-status-title">配送中</div>
+                        <div class="rider-status-desc">预计14:50送达</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配送路线 -->
+        <div class="rider-detail-section">
+            <div class="rider-detail-header">
+                配送路线
+            </div>
+            <div class="rider-detail-body">
+                <div class="rider-route">
+                    <div class="rider-route-icons">
+                        <div class="rider-route-icon pickup">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="rider-route-line"></div>
+                        <div class="rider-route-icon delivery">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                    <div class="rider-route-info">
+                        <div class="rider-route-address">
+                            <div class="rider-route-name">
+                                川湘居 (望京店)
+                                <div class="rider-route-action">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                            </div>
+                            <div class="rider-route-text">北京市朝阳区望京SOHO T1 C座 1层</div>
+                        </div>
+                        <div class="rider-route-address">
+                            <div class="rider-route-name">
+                                赵六 (先生)
+                                <div class="rider-route-action">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                            </div>
+                            <div class="rider-route-text">北京市朝阳区三元桥霄云路36号</div>
+                            <div class="rider-route-distance">
+                                <i class="fas fa-map-signs me-1"></i> 配送距离: 约2.5公里
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 配送地图 -->
+                <div class="rider-map">
+                    [配送地图]
+                </div>
+                
+                <!-- 配送进度 -->
+                <div class="rider-progress">
+                    <div class="rider-progress-steps">
+                        <div class="rider-progress-step">
+                            <div class="rider-step-icon active">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="rider-step-content">
+                                <div class="rider-step-title">已接单</div>
+                                <div class="rider-step-time">14:15</div>
+                            </div>
+                        </div>
+                        <div class="rider-progress-step">
+                            <div class="rider-step-icon active">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="rider-step-content">
+                                <div class="rider-step-title">已到店</div>
+                                <div class="rider-step-time">14:25</div>
+                            </div>
+                        </div>
+                        <div class="rider-progress-step">
+                            <div class="rider-step-icon active">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="rider-step-content">
+                                <div class="rider-step-title">已取餐</div>
+                                <div class="rider-step-time">14:30</div>
+                            </div>
+                        </div>
+                        <div class="rider-progress-step">
+                            <div class="rider-step-icon">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="rider-step-content">
+                                <div class="rider-step-title">已送达</div>
+                                <div class="rider-step-time">预计14:50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单信息 -->
+        <div class="rider-detail-section">
+            <div class="rider-detail-header">
+                订单信息
+            </div>
+            <div class="rider-detail-body">
+                <div class="rider-order-info-item">
+                    <div class="rider-order-info-label">订单号</div>
+                    <div class="rider-order-info-value">2025053012345676</div>
+                </div>
+                <div class="rider-order-info-item">
+                    <div class="rider-order-info-label">下单时间</div>
+                    <div class="rider-order-info-value">2025-05-30 14:05</div>
+                </div>
+                <div class="rider-order-info-item">
+                    <div class="rider-order-info-label">支付方式</div>
+                    <div class="rider-order-info-value">微信支付</div>
+                </div>
+                <div class="rider-order-info-item">
+                    <div class="rider-order-info-label">备注</div>
+                    <div class="rider-order-info-value">不要辣椒，多加点醋</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品信息 -->
+        <div class="rider-detail-section">
+            <div class="rider-detail-header">
+                商品信息
+            </div>
+            <div class="rider-detail-body">
+                <!-- 商品1 -->
+                <div class="rider-order-item">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="rider-order-item-image" alt="商品图片">
+                    <div class="rider-order-item-info">
+                        <div class="rider-order-item-title">麻婆豆腐</div>
+                        <div class="rider-order-item-price">¥28</div>
+                    </div>
+                    <div class="rider-order-item-quantity">
+                        x1
+                    </div>
+                </div>
+                <!-- 商品2 -->
+                <div class="rider-order-item">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="rider-order-item-image" alt="商品图片">
+                    <div class="rider-order-item-info">
+                        <div class="rider-order-item-title">水煮鱼片</div>
+                        <div class="rider-order-item-price">¥58</div>
+                    </div>
+                    <div class="rider-order-item-quantity">
+                        x1
+                    </div>
+                </div>
+                <!-- 商品3 -->
+                <div class="rider-order-item">
+                    <img src="https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="rider-order-item-image" alt="商品图片">
+                    <div class="rider-order-item-info">
+                        <div class="rider-order-item-title">米饭</div>
+                        <div class="rider-order-item-price">¥2</div>
+                    </div>
+                    <div class="rider-order-item-quantity">
+                        x2
+                    </div>
+                </div>
+                
+                <div class="rider-order-total">
+                    合计: <span>¥90</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="rider-actions">
+            <div class="rider-action-btn">
+                <div class="rider-action-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="rider-action-text">联系客户</div>
+            </div>
+            <div class="rider-action-btn">
+                <div class="rider-action-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="rider-action-text">联系商家</div>
+            </div>
+            <div class="rider-action-btn">
+                <div class="rider-action-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="rider-action-text">联系客服</div>
+            </div>
+        </div>
+
+        <!-- 确认送达按钮 -->
+        <button class="rider-confirm-btn">
+            确认送达
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 返回按钮点击
+        document.querySelector('.rider-nav-left').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // 联系客户按钮点击
+        document.querySelectorAll('.rider-action-btn')[0].addEventListener('click', function() {
+            alert('拨打客户电话');
+        });
+        
+        // 联系商家按钮点击
+        document.querySelectorAll('.rider-action-btn')[1].addEventListener('click', function() {
+            alert('拨打商家电话');
+        });
+        
+        // 联系客服按钮点击
+        document.querySelectorAll('.rider-action-btn')[2].addEventListener('click', function() {
+            alert('拨打客服电话');
+        });
+        
+        // 确认送达按钮点击
+        document.querySelector('.rider-confirm-btn').addEventListener('click', function() {
+            if (confirm('确认已将订单送达给客户？')) {
+                alert('订单已完成');
+                window.location.href = 'rider-orders.html';
+            }
+        });
+        
+        // 商家电话按钮点击
+        document.querySelectorAll('.rider-route-action')[0].addEventListener('click', function(e) {
+            e.stopPropagation();
+            alert('拨打商家电话');
+        });
+        
+        // 客户电话按钮点击
+        document.querySelectorAll('.rider-route-action')[1].addEventListener('click', function(e) {
+            e.stopPropagation();
+            alert('拨打客户电话');
+        });
+    </script>
+</body>
+</html>

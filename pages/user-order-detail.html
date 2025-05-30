@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情 - 用户端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .order-detail-section {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .order-detail-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .order-detail-body {
+            padding: 15px;
+        }
+        
+        .order-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .order-status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .order-status-info {
+            flex: 1;
+        }
+        
+        .order-status-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .order-status-desc {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .delivery-map {
+            height: 150px;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-gray);
+        }
+        
+        .rider-info {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--light-gray);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .rider-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .rider-details {
+            flex: 1;
+        }
+        
+        .rider-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .rider-phone {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .rider-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .delivery-progress {
+            margin-top: 15px;
+        }
+        
+        .progress-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .progress-steps:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            width: 2px;
+            background-color: var(--medium-gray);
+            z-index: 0;
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .step-icon.active {
+            background-color: var(--primary-color);
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .step-time {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .address-info {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .address-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+        
+        .address-details {
+            flex: 1;
+        }
+        
+        .address-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .address-phone {
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .address-text {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .order-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .order-item-info {
+            flex: 1;
+        }
+        
+        .order-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .order-item-price {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .order-item-quantity {
+            color: var(--dark-gray);
+            font-size: 14px;
+            text-align: right;
+        }
+        
+        .order-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .order-info-label {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .order-info-value {
+            font-size: 14px;
+        }
+        
+        .order-summary {
+            padding: 15px;
+        }
+        
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .order-summary-item:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+        }
+        
+        .order-summary-label {
+            color: var(--dark-gray);
+        }
+        
+        .order-summary-value {
+            font-weight: 600;
+        }
+        
+        .order-summary-total {
+            color: var(--primary-color);
+        }
+        
+        .order-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .order-action-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--dark-gray);
+            color: var(--dark-gray);
+            background-color: white;
+        }
+        
+        .btn-primary-outline {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: white;
+        }
+        
+        .btn-primary-solid {
+            border: 1px solid var(--primary-color);
+            color: white;
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <div class="left">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="title">订单详情</div>
+        <div class="right">
+            <i class="fas fa-ellipsis-h"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 订单状态 -->
+        <div class="order-detail-section">
+            <div class="order-detail-body">
+                <div class="order-status">
+                    <div class="order-status-icon">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="order-status-info">
+                        <div class="order-status-title">配送中</div>
+                        <div class="order-status-desc">骑手正在配送中，预计14:50送达</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配送信息 -->
+        <div class="order-detail-section">
+            <div class="order-detail-header">
+                配送信息
+            </div>
+            <div class="order-detail-body">
+                <!-- 配送地图 -->
+                <div class="delivery-map">
+                    [配送地图]
+                </div>
+                
+                <!-- 骑手信息 -->
+                <div class="rider-info">
+                    <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="rider-avatar" alt="骑手头像">
+                    <div class="rider-details">
+                        <div class="rider-name">李师傅</div>
+                        <div class="rider-phone">138****5678</div>
+                    </div>
+                    <div class="rider-actions">
+                        <div class="rider-action">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="rider-action">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 配送进度 -->
+                <div class="delivery-progress">
+                    <div class="progress-steps">
+                        <div class="progress-step">
+                            <div class="step-icon active">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">商家已接单</div>
+                                <div class="step-time">14:05</div>
+                            </div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon active">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">骑手已接单</div>
+                                <div class="step-time">14:15</div>
+                            </div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon active">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">骑手已取餐</div>
+                                <div class="step-time">14:25</div>
+                            </div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">骑手已送达</div>
+                                <div class="step-time">预计14:50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 收货地址 -->
+        <div class="order-detail-section">
+            <div class="order-detail-header">
+                收货地址
+            </div>
+            <div class="order-detail-body">
+                <div class="address-info">
+                    <div class="address-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="address-details">
+                        <div class="address-name">张三 (先生)</div>
+                        <div class="address-phone">138****1234</div>
+                        <div class="address-text">北京市朝阳区望京SOHO T1 C座 10层 1001室</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品信息 -->
+        <div class="order-detail-section">
+            <div class="order-detail-header">
+                <i class="fas fa-store text-primary me-2"></i> 川湘居
+            </div>
+            <div class="order-detail-body">
+                <!-- 商品1 -->
+                <div class="order-item">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                    <div class="order-item-info">
+                        <div class="order-item-title">麻婆豆腐</div>
+                        <div class="order-item-price">¥28</div>
+                    </div>
+                    <div class="order-item-quantity">
+                        x1
+                    </div>
+                </div>
+                <!-- 商品2 -->
+                <div class="order-item">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                    <div class="order-item-info">
+                        <div class="order-item-title">水煮鱼片</div>
+                        <div class="order-item-price">¥58</div>
+                    </div>
+                    <div class="order-item-quantity">
+                        x1
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单信息 -->
+        <div class="order-detail-section">
+            <div class="order-detail-header">
+                订单信息
+            </div>
+            <div class="order-detail-body">
+                <div class="order-info-item">
+                    <div class="order-info-label">订单号</div>
+                    <div class="order-info-value">2025053012345678</div>
+                </div>
+                <div class="order-info-item">
+                    <div class="order-info-label">下单时间</div>
+                    <div class="order-info-value">2025-05-30 14:00</div>
+                </div>
+                <div class="order-info-item">
+                    <div class="order-info-label">支付方式</div>
+                    <div class="order-info-value">微信支付</div>
+                </div>
+                <div class="order-info-item">
+                    <div class="order-info-label">配送方式</div>
+                    <div class="order-info-value">美团专送</div>
+                </div>
+                <div class="order-info-item">
+                    <div class="order-info-label">备注</div>
+                    <div class="order-info-value">少放辣椒，多加点醋</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 费用明细 -->
+        <div class="order-detail-section">
+            <div class="order-detail-header">
+                费用明细
+            </div>
+            <div class="order-summary">
+                <div class="order-summary-item">
+                    <div class="order-summary-label">商品金额</div>
+                    <div class="order-summary-value">¥86</div>
+                </div>
+                <div class="order-summary-item">
+                    <div class="order-summary-label">配送费</div>
+                    <div class="order-summary-value">¥5</div>
+                </div>
+                <div class="order-summary-item">
+                    <div class="order-summary-label">优惠券</div>
+                    <div class="order-summary-value">-¥5</div>
+                </div>
+                <div class="order-summary-item">
+                    <div class="order-summary-label">实付金额</div>
+                    <div class="order-summary-value order-summary-total">¥86</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部操作按钮 -->
+        <div class="order-detail-section">
+            <div class="order-actions">
+                <button class="order-action-btn btn-outline">联系商家</button>
+                <button class="order-action-btn btn-primary-outline">查看物流</button>
+                <button class="order-action-btn btn-primary-solid">确认收货</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部标签栏 -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <i class="fas fa-home"></i>
+            <div>首页</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-compass"></i>
+            <div>发现</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-shopping-cart"></i>
+            <div>购物车</div>
+        </div>
+        <div class="tab-item active">
+            <i class="fas fa-file-alt"></i>
+            <div>订单</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-user"></i>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

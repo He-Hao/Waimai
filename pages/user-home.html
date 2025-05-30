@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - 用户端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <div class="address-selector">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>北京市朝阳区望京SOHO</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="right">
+            <i class="fas fa-bell"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="搜索商家、商品名称">
+        </div>
+
+        <!-- 轮播广告 -->
+        <div id="homeCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+            <div class="carousel-inner rounded">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="d-block w-100" alt="美食推广" style="height: 150px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="d-block w-100" alt="新店推广" style="height: 150px; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 分类导航 -->
+        <div class="category-nav">
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="category-name">美食</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-coffee"></i>
+                </div>
+                <div class="category-name">咖啡</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+                <div class="category-name">甜点</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="category-name">超市</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-apple-alt"></i>
+                </div>
+                <div class="category-name">水果</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <div class="category-name">药店</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-hamburger"></i>
+                </div>
+                <div class="category-name">快餐</div>
+            </div>
+            <div class="category-item">
+                <div class="category-icon">
+                    <i class="fas fa-fish"></i>
+                </div>
+                <div class="category-name">海鲜</div>
+            </div>
+        </div>
+
+        <!-- 商家推荐 -->
+        <h6 class="mb-3 font-weight-bold">推荐商家</h6>
+        
+        <!-- 商家列表 -->
+        <div class="shop-list">
+            <!-- 商家1 -->
+            <div class="shop-item">
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                <div class="shop-info">
+                    <div class="shop-title">川湘居</div>
+                    <div class="shop-desc">川菜 | 人均¥45 | 30分钟送达</div>
+                    <div class="shop-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.8</span>
+                        <span class="ml-2">月售2000+</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商家2 -->
+            <div class="shop-item">
+                <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                <div class="shop-info">
+                    <div class="shop-title">粤香阁</div>
+                    <div class="shop-desc">粤菜 | 人均¥60 | 35分钟送达</div>
+                    <div class="shop-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.7</span>
+                        <span class="ml-2">月售1800+</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商家3 -->
+            <div class="shop-item">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                <div class="shop-info">
+                    <div class="shop-title">京都小馆</div>
+                    <div class="shop-desc">北京菜 | 人均¥50 | 25分钟送达</div>
+                    <div class="shop-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.6</span>
+                        <span class="ml-2">月售1500+</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商家4 -->
+            <div class="shop-item">
+                <img src="https://images.unsplash.com/photo-1515669097368-22e68427d265?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                <div class="shop-info">
+                    <div class="shop-title">鲜芋仙</div>
+                    <div class="shop-desc">甜品 | 人均¥30 | 20分钟送达</div>
+                    <div class="shop-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.9</span>
+                        <span class="ml-2">月售3000+</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商家5 -->
+            <div class="shop-item">
+                <img src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                <div class="shop-info">
+                    <div class="shop-title">星巴克咖啡</div>
+                    <div class="shop-desc">咖啡 | 人均¥35 | 15分钟送达</div>
+                    <div class="shop-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.8</span>
+                        <span class="ml-2">月售2500+</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商家6 -->
+            <div class="shop-item">
+                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                <div class="shop-info">
+                    <div class="shop-title">沙县小吃</div>
+                    <div class="shop-desc">闽菜 | 人均¥25 | 18分钟送达</div>
+                    <div class="shop-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.5</span>
+                        <span class="ml-2">月售3500+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部标签栏 -->
+    <div class="tab-bar">
+        <div class="tab-item active">
+            <i class="fas fa-home"></i>
+            <div>首页</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-compass"></i>
+            <div>发现</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-shopping-cart"></i>
+            <div>购物车</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-file-alt"></i>
+            <div>订单</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-user"></i>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

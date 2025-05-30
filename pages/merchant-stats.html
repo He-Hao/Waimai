@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据统计 - 商家端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .merchant-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .merchant-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .merchant-nav-menu {
+            font-size: 20px;
+        }
+        
+        .merchant-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .merchant-bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--dark-gray);
+        }
+        
+        .merchant-bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .merchant-bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .merchant-bottom-nav-text {
+            font-size: 12px;
+        }
+        
+        .stats-time-filter {
+            display: flex;
+            background-color: white;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-time-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+            margin: 0 5px;
+        }
+        
+        .stats-time-btn.active {
+            color: white;
+            background-color: var(--primary-color);
+        }
+        
+        .stats-card {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stats-card-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stats-card-body {
+            padding: 15px;
+        }
+        
+        .stats-overview {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .stats-overview-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .stats-overview-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stats-overview-label {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .stats-chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        .stats-top-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-top-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .stats-top-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .stats-top-rank.top1 {
+            background-color: #FFD700;
+            color: white;
+        }
+        
+        .stats-top-rank.top2 {
+            background-color: #C0C0C0;
+            color: white;
+        }
+        
+        .stats-top-rank.top3 {
+            background-color: #CD7F32;
+            color: white;
+        }
+        
+        .stats-top-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        .stats-top-info {
+            flex: 1;
+        }
+        
+        .stats-top-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .stats-top-sales {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .stats-top-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 商家导航栏 -->
+    <div class="merchant-nav-bar">
+        <div class="merchant-nav-title">数据统计</div>
+        <div class="merchant-nav-menu">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+    </div>
+
+    <!-- 时间筛选 -->
+    <div class="stats-time-filter">
+        <div class="stats-time-btn active">今日</div>
+        <div class="stats-time-btn">本周</div>
+        <div class="stats-time-btn">本月</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content p-3" style="margin-bottom: 60px;">
+        <!-- 销售概览 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                销售概览
+            </div>
+            <div class="stats-card-body">
+                <div class="stats-overview">
+                    <div class="stats-overview-item">
+                        <div class="stats-overview-value">¥2,586</div>
+                        <div class="stats-overview-label">总销售额</div>
+                    </div>
+                    <div class="stats-overview-item">
+                        <div class="stats-overview-value">32</div>
+                        <div class="stats-overview-label">订单数</div>
+                    </div>
+                    <div class="stats-overview-item">
+                        <div class="stats-overview-value">¥80.8</div>
+                        <div class="stats-overview-label">客单价</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 销售趋势 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                销售趋势
+                <div class="text-primary" style="font-size: 14px; font-weight: normal;">
+                    <i class="fas fa-arrow-up"></i> 12.5%
+                </div>
+            </div>
+            <div class="stats-card-body">
+                <div class="stats-chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单统计 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                订单统计
+            </div>
+            <div class="stats-card-body">
+                <div class="stats-chart-container">
+                    <canvas id="orderChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 热销菜品 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                热销菜品
+            </div>
+            <div class="stats-card-body">
+                <!-- 热销菜品1 -->
+                <div class="stats-top-item">
+                    <div class="stats-top-rank top1">1</div>
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="stats-top-image" alt="菜品图片">
+                    <div class="stats-top-info">
+                        <div class="stats-top-name">麻婆豆腐</div>
+                        <div class="stats-top-sales">销量: 28份</div>
+                    </div>
+                    <div class="stats-top-value">¥784</div>
+                </div>
+
+                <!-- 热销菜品2 -->
+                <div class="stats-top-item">
+                    <div class="stats-top-rank top2">2</div>
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="stats-top-image" alt="菜品图片">
+                    <div class="stats-top-info">
+                        <div class="stats-top-name">水煮鱼片</div>
+                        <div class="stats-top-sales">销量: 22份</div>
+                    </div>
+                    <div class="stats-top-value">¥1,276</div>
+                </div>
+
+                <!-- 热销菜品3 -->
+                <div class="stats-top-item">
+                    <div class="stats-top-rank top3">3</div>
+                    <img src="https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="stats-top-image" alt="菜品图片">
+                    <div class="stats-top-info">
+                        <div class="stats-top-name">辣子鸡</div>
+                        <div class="stats-top-sales">销量: 16份</div>
+                    </div>
+                    <div class="stats-top-value">¥768</div>
+                </div>
+
+                <!-- 热销菜品4 -->
+                <div class="stats-top-item">
+                    <div class="stats-top-rank">4</div>
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="stats-top-image" alt="菜品图片">
+                    <div class="stats-top-info">
+                        <div class="stats-top-name">回锅肉</div>
+                        <div class="stats-top-sales">销量: 12份</div>
+                    </div>
+                    <div class="stats-top-value">¥504</div>
+                </div>
+
+                <!-- 热销菜品5 -->
+                <div class="stats-top-item">
+                    <div class="stats-top-rank">5</div>
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="stats-top-image" alt="菜品图片">
+                    <div class="stats-top-info">
+                        <div class="stats-top-name">宫保鸡丁</div>
+                        <div class="stats-top-sales">销量: 10份</div>
+                    </div>
+                    <div class="stats-top-value">¥380</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="merchant-bottom-nav">
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">订单</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">菜品</div>
+        </div>
+        <div class="merchant-bottom-nav-item active">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">数据</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 时间筛选切换
+        document.querySelectorAll('.stats-time-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.stats-time-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加切换数据的逻辑
+            });
+        });
+        
+        // 底部导航切换
+        document.querySelectorAll('.merchant-bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.merchant-bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加页面跳转逻辑
+                const index = Array.from(document.querySelectorAll('.merchant-bottom-nav-item')).indexOf(this);
+                if (index === 0) {
+                    window.location.href = 'merchant-orders.html';
+                } else if (index === 1) {
+                    window.location.href = 'merchant-dishes.html';
+                } else if (index === 2) {
+                    window.location.href = 'merchant-stats.html';
+                } else if (index === 3) {
+                    window.location.href = 'merchant-profile.html';
+                }
+            });
+        });
+        
+        // 销售趋势图表
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [{
+                    label: '销售额',
+                    data: [320, 420, 580, 450, 620, 780, 420],
+                    backgroundColor: 'rgba(255, 90, 95, 0.2)',
+                    borderColor: 'rgba(255, 90, 95, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // 订单统计图表
+        const orderCtx = document.getElementById('orderChart').getContext('2d');
+        const orderChart = new Chart(orderCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['已完成', '配送中', '备餐中', '新订单', '已取消'],
+                datasets: [{
+                    data: [18, 5, 4, 3, 2],
+                    backgroundColor: [
+                        '#28a745',
+                        '#007bff',
+                        '#ffc107',
+                        '#ff5a5f',
+                        '#6c757d'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

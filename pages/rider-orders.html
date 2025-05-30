@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单列表 - 骑手端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .rider-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .rider-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .rider-nav-menu {
+            font-size: 20px;
+        }
+        
+        .rider-tabs {
+            display: flex;
+            background-color: white;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .rider-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            color: var(--dark-gray);
+            position: relative;
+            font-size: 14px;
+        }
+        
+        .rider-tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .rider-tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .rider-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .rider-bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--dark-gray);
+        }
+        
+        .rider-bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .rider-bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .rider-bottom-nav-text {
+            font-size: 12px;
+        }
+        
+        .rider-order-card {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .rider-order-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .rider-order-id {
+            font-weight: 600;
+        }
+        
+        .rider-order-time {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-order-status {
+            color: var(--primary-color);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .rider-order-body {
+            padding: 15px;
+        }
+        
+        .rider-order-route {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .rider-order-route-icons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .rider-order-route-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .rider-order-route-icon.pickup {
+            background-color: var(--primary-color);
+        }
+        
+        .rider-order-route-icon.delivery {
+            background-color: #28a745;
+        }
+        
+        .rider-order-route-line {
+            width: 2px;
+            height: 30px;
+            background-color: #ddd;
+            margin: 5px 0;
+        }
+        
+        .rider-order-route-info {
+            flex: 1;
+        }
+        
+        .rider-order-route-address {
+            margin-bottom: 15px;
+        }
+        
+        .rider-order-route-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .rider-order-route-text {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-order-route-distance {
+            color: var(--dark-gray);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .rider-order-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .rider-order-info-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .rider-order-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .rider-order-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--dark-gray);
+            color: var(--dark-gray);
+            background-color: white;
+        }
+        
+        .btn-primary-outline {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: white;
+        }
+        
+        .btn-primary-solid {
+            border: 1px solid var(--primary-color);
+            color: white;
+            background-color: var(--primary-color);
+        }
+        
+        .rider-empty-orders {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+            color: var(--dark-gray);
+        }
+        
+        .rider-empty-orders i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--medium-gray);
+        }
+        
+        .rider-order-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 骑手导航栏 -->
+    <div class="rider-nav-bar">
+        <div class="rider-nav-title">订单列表</div>
+        <div class="rider-nav-menu">
+            <i class="fas fa-bell"></i>
+        </div>
+    </div>
+
+    <!-- 订单标签页 -->
+    <div class="rider-tabs">
+        <div class="rider-tab active">可接单 <span class="rider-order-badge">3</span></div>
+        <div class="rider-tab">配送中</div>
+        <div class="rider-tab">已完成</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content p-3" style="margin-bottom: 60px;">
+        <!-- 可接单列表 -->
+        <div class="rider-order-list">
+            <!-- 订单1 -->
+            <div class="rider-order-card">
+                <div class="rider-order-header">
+                    <div class="rider-order-id">订单号: 2025053012345678</div>
+                    <div class="rider-order-status">待接单</div>
+                </div>
+                <div class="rider-order-body">
+                    <div class="rider-order-route">
+                        <div class="rider-order-route-icons">
+                            <div class="rider-order-route-icon pickup">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="rider-order-route-line"></div>
+                            <div class="rider-order-route-icon delivery">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                        <div class="rider-order-route-info">
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">川湘居 (望京店)</div>
+                                <div class="rider-order-route-text">北京市朝阳区望京SOHO T1 C座 1层</div>
+                            </div>
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">张三 (先生)</div>
+                                <div class="rider-order-route-text">北京市朝阳区望京SOHO T1 C座 10层 1001室</div>
+                                <div class="rider-order-route-distance">
+                                    <i class="fas fa-map-signs me-1"></i> 配送距离: 约1.5公里
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>订单金额</div>
+                        <div class="rider-order-info-value">¥86</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>配送费</div>
+                        <div class="rider-order-info-value">¥8</div>
+                    </div>
+                </div>
+                <div class="rider-order-footer">
+                    <button class="rider-order-btn btn-primary-solid">接单</button>
+                </div>
+            </div>
+
+            <!-- 订单2 -->
+            <div class="rider-order-card">
+                <div class="rider-order-header">
+                    <div class="rider-order-id">订单号: 2025053012345679</div>
+                    <div class="rider-order-status">待接单</div>
+                </div>
+                <div class="rider-order-body">
+                    <div class="rider-order-route">
+                        <div class="rider-order-route-icons">
+                            <div class="rider-order-route-icon pickup">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="rider-order-route-line"></div>
+                            <div class="rider-order-route-icon delivery">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                        <div class="rider-order-route-info">
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">川湘居 (望京店)</div>
+                                <div class="rider-order-route-text">北京市朝阳区望京SOHO T1 C座 1层</div>
+                            </div>
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">李四 (先生)</div>
+                                <div class="rider-order-route-text">北京市海淀区中关村大街1号</div>
+                                <div class="rider-order-route-distance">
+                                    <i class="fas fa-map-signs me-1"></i> 配送距离: 约5.2公里
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>订单金额</div>
+                        <div class="rider-order-info-value">¥88</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>配送费</div>
+                        <div class="rider-order-info-value">¥12</div>
+                    </div>
+                </div>
+                <div class="rider-order-footer">
+                    <button class="rider-order-btn btn-primary-solid">接单</button>
+                </div>
+            </div>
+
+            <!-- 订单3 -->
+            <div class="rider-order-card">
+                <div class="rider-order-header">
+                    <div class="rider-order-id">订单号: 2025053012345677</div>
+                    <div class="rider-order-status">待接单</div>
+                </div>
+                <div class="rider-order-body">
+                    <div class="rider-order-route">
+                        <div class="rider-order-route-icons">
+                            <div class="rider-order-route-icon pickup">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="rider-order-route-line"></div>
+                            <div class="rider-order-route-icon delivery">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                        <div class="rider-order-route-info">
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">川湘居 (望京店)</div>
+                                <div class="rider-order-route-text">北京市朝阳区望京SOHO T1 C座 1层</div>
+                            </div>
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">王五 (先生)</div>
+                                <div class="rider-order-route-text">北京市朝阳区建国路88号</div>
+                                <div class="rider-order-route-distance">
+                                    <i class="fas fa-map-signs me-1"></i> 配送距离: 约3.8公里
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>订单金额</div>
+                        <div class="rider-order-info-value">¥112</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>配送费</div>
+                        <div class="rider-order-info-value">¥10</div>
+                    </div>
+                </div>
+                <div class="rider-order-footer">
+                    <button class="rider-order-btn btn-primary-solid">接单</button>
+                </div>
+            </div>
+
+            <!-- 空订单状态 (默认隐藏) -->
+            <div class="rider-empty-orders" style="display: none;">
+                <i class="fas fa-clipboard-list"></i>
+                <p>暂无可接订单</p>
+            </div>
+        </div>
+
+        <!-- 配送中列表 (默认隐藏) -->
+        <div class="rider-order-list" style="display: none;">
+            <!-- 订单1 -->
+            <div class="rider-order-card">
+                <div class="rider-order-header">
+                    <div class="rider-order-id">订单号: 2025053012345676</div>
+                    <div class="rider-order-status">配送中</div>
+                </div>
+                <div class="rider-order-body">
+                    <div class="rider-order-route">
+                        <div class="rider-order-route-icons">
+                            <div class="rider-order-route-icon pickup">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="rider-order-route-line"></div>
+                            <div class="rider-order-route-icon delivery">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                        <div class="rider-order-route-info">
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">川湘居 (望京店)</div>
+                                <div class="rider-order-route-text">北京市朝阳区望京SOHO T1 C座 1层</div>
+                            </div>
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">赵六 (先生)</div>
+                                <div class="rider-order-route-text">北京市朝阳区三元桥霄云路36号</div>
+                                <div class="rider-order-route-distance">
+                                    <i class="fas fa-map-signs me-1"></i> 配送距离: 约2.5公里
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>订单金额</div>
+                        <div class="rider-order-info-value">¥96</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>配送费</div>
+                        <div class="rider-order-info-value">¥9</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>预计送达时间</div>
+                        <div class="rider-order-info-value">14:50</div>
+                    </div>
+                </div>
+                <div class="rider-order-footer">
+                    <button class="rider-order-btn btn-outline">联系客户</button>
+                    <button class="rider-order-btn btn-primary-solid">确认送达</button>
+                </div>
+            </div>
+
+            <!-- 空订单状态 (默认隐藏) -->
+            <div class="rider-empty-orders" style="display: none;">
+                <i class="fas fa-motorcycle"></i>
+                <p>暂无配送中订单</p>
+            </div>
+        </div>
+
+        <!-- 已完成列表 (默认隐藏) -->
+        <div class="rider-order-list" style="display: none;">
+            <!-- 订单1 -->
+            <div class="rider-order-card">
+                <div class="rider-order-header">
+                    <div class="rider-order-id">订单号: 2025053012345675</div>
+                    <div class="rider-order-status">已完成</div>
+                </div>
+                <div class="rider-order-body">
+                    <div class="rider-order-route">
+                        <div class="rider-order-route-icons">
+                            <div class="rider-order-route-icon pickup">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="rider-order-route-line"></div>
+                            <div class="rider-order-route-icon delivery">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                        <div class="rider-order-route-info">
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">川湘居 (望京店)</div>
+                                <div class="rider-order-route-text">北京市朝阳区望京SOHO T1 C座 1层</div>
+                            </div>
+                            <div class="rider-order-route-address">
+                                <div class="rider-order-route-name">孙七 (先生)</div>
+                                <div class="rider-order-route-text">北京市朝阳区酒仙桥路4号</div>
+                                <div class="rider-order-route-distance">
+                                    <i class="fas fa-map-signs me-1"></i> 配送距离: 约4.2公里
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>订单金额</div>
+                        <div class="rider-order-info-value">¥78</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>配送费</div>
+                        <div class="rider-order-info-value">¥11</div>
+                    </div>
+                    <div class="rider-order-info">
+                        <div>送达时间</div>
+                        <div class="rider-order-info-value">今天 13:45</div>
+                    </div>
+                </div>
+                <div class="rider-order-footer">
+                    <button class="rider-order-btn btn-primary-outline">查看详情</button>
+                </div>
+            </div>
+
+            <!-- 空订单状态 (默认隐藏) -->
+            <div class="rider-empty-orders" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <p>暂无已完成订单</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="rider-bottom-nav">
+        <div class="rider-bottom-nav-item active">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="rider-bottom-nav-text">订单</div>
+        </div>
+        <div class="rider-bottom-nav-item">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="rider-bottom-nav-text">统计</div>
+        </div>
+        <div class="rider-bottom-nav-item">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="rider-bottom-nav-text">我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.rider-tab').forEach((tab, index) => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.rider-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.rider-order-list').forEach(list => list.style.display = 'none');
+                document.querySelectorAll('.rider-order-list')[index].style.display = 'block';
+            });
+        });
+        
+        // 底部导航切换
+        document.querySelectorAll('.rider-bottom-nav-item').forEach((item, index) => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.rider-bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加页面跳转逻辑
+                if (index === 0) {
+                    window.location.href = 'rider-orders.html';
+                } else if (index === 1) {
+                    window.location.href = 'rider-stats.html';
+                } else if (index === 2) {
+                    window.location.href = 'rider-profile.html';
+                }
+            });
+        });
+        
+        // 接单按钮点击
+        document.querySelectorAll('.rider-order-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const text = this.textContent.trim();
+                if (text === '接单') {
+                    const card = this.closest('.rider-order-card');
+                    const orderId = card.querySelector('.rider-order-id').textContent.split(':')[1].trim();
+                    alert(`已接单: ${orderId}`);
+                    
+                    // 切换到配送中标签
+                    document.querySelectorAll('.rider-tab')[1].click();
+                } else if (text === '确认送达') {
+                    const card = this.closest('.rider-order-card');
+                    const orderId = card.querySelector('.rider-order-id').textContent.split(':')[1].trim();
+                    alert(`已送达: ${orderId}`);
+                    
+                    // 切换到已完成标签
+                    document.querySelectorAll('.rider-tab')[2].click();
+                } else if (text === '联系客户') {
+                    alert('拨打客户电话');
+                } else if (text === '查看详情') {
+                    const card = this.closest('.rider-order-card');
+                    const orderId = card.querySelector('.rider-order-id').textContent.split(':')[1].trim();
+                    window.location.href = `rider-order-detail.html?id=${orderId}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

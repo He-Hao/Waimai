@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据统计 - 骑手端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .rider-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .rider-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .rider-nav-menu {
+            font-size: 20px;
+        }
+        
+        .rider-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .rider-bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--dark-gray);
+        }
+        
+        .rider-bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .rider-bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .rider-bottom-nav-text {
+            font-size: 12px;
+        }
+        
+        .stats-time-filter {
+            display: flex;
+            background-color: white;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-time-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+            margin: 0 5px;
+        }
+        
+        .stats-time-btn.active {
+            color: white;
+            background-color: var(--primary-color);
+        }
+        
+        .stats-card {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stats-card-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stats-card-body {
+            padding: 15px;
+        }
+        
+        .stats-income {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stats-income-title {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .stats-income-value {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .stats-income-compare {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-income-compare i {
+            margin-right: 5px;
+        }
+        
+        .stats-income-grid {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .stats-income-item {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 0 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stats-income-item-title {
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
+        
+        .stats-income-item-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stats-overview {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .stats-overview-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .stats-overview-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stats-overview-label {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .stats-chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        .stats-ranking {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-ranking:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .stats-ranking-position {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+        
+        .stats-ranking-position.top1 {
+            background-color: #FFD700;
+            color: white;
+        }
+        
+        .stats-ranking-position.top2 {
+            background-color: #C0C0C0;
+            color: white;
+        }
+        
+        .stats-ranking-position.top3 {
+            background-color: #CD7F32;
+            color: white;
+        }
+        
+        .stats-ranking-info {
+            flex: 1;
+        }
+        
+        .stats-ranking-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .stats-ranking-value {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .stats-ranking-score {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 骑手导航栏 -->
+    <div class="rider-nav-bar">
+        <div class="rider-nav-title">数据统计</div>
+        <div class="rider-nav-menu">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+    </div>
+
+    <!-- 时间筛选 -->
+    <div class="stats-time-filter">
+        <div class="stats-time-btn active">今日</div>
+        <div class="stats-time-btn">本周</div>
+        <div class="stats-time-btn">本月</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content p-3" style="margin-bottom: 60px;">
+        <!-- 收入概览 -->
+        <div class="stats-income">
+            <div class="stats-income-title">今日收入</div>
+            <div class="stats-income-value">¥128</div>
+            <div class="stats-income-compare">
+                <i class="fas fa-arrow-up"></i> 较昨日增长 15%
+            </div>
+        </div>
+
+        <!-- 收入分类 -->
+        <div class="stats-income-grid">
+            <div class="stats-income-item">
+                <div class="stats-income-item-title">本周收入</div>
+                <div class="stats-income-item-value">¥876</div>
+            </div>
+            <div class="stats-income-item">
+                <div class="stats-income-item-title">本月收入</div>
+                <div class="stats-income-item-value">¥3,254</div>
+            </div>
+        </div>
+
+        <!-- 订单概览 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                订单概览
+            </div>
+            <div class="stats-card-body">
+                <div class="stats-overview">
+                    <div class="stats-overview-item">
+                        <div class="stats-overview-value">16</div>
+                        <div class="stats-overview-label">今日订单</div>
+                    </div>
+                    <div class="stats-overview-item">
+                        <div class="stats-overview-value">98%</div>
+                        <div class="stats-overview-label">完成率</div>
+                    </div>
+                    <div class="stats-overview-item">
+                        <div class="stats-overview-value">4.9</div>
+                        <div class="stats-overview-label">平均评分</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 收入趋势 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                收入趋势
+                <div class="text-primary" style="font-size: 14px; font-weight: normal;">
+                    <i class="fas fa-arrow-up"></i> 12.5%
+                </div>
+            </div>
+            <div class="stats-card-body">
+                <div class="stats-chart-container">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单统计 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                订单统计
+            </div>
+            <div class="stats-card-body">
+                <div class="stats-chart-container">
+                    <canvas id="orderChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 骑手排行榜 -->
+        <div class="stats-card">
+            <div class="stats-card-header">
+                骑手排行榜
+            </div>
+            <div class="stats-card-body">
+                <!-- 排名1 -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-position top1">1</div>
+                    <div class="stats-ranking-info">
+                        <div class="stats-ranking-name">张师傅</div>
+                        <div class="stats-ranking-value">今日订单: 24单 | 评分: 4.9</div>
+                    </div>
+                    <div class="stats-ranking-score">¥192</div>
+                </div>
+
+                <!-- 排名2 -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-position top2">2</div>
+                    <div class="stats-ranking-info">
+                        <div class="stats-ranking-name">李师傅</div>
+                        <div class="stats-ranking-value">今日订单: 22单 | 评分: 4.8</div>
+                    </div>
+                    <div class="stats-ranking-score">¥176</div>
+                </div>
+
+                <!-- 排名3 -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-position top3">3</div>
+                    <div class="stats-ranking-info">
+                        <div class="stats-ranking-name">王师傅</div>
+                        <div class="stats-ranking-value">今日订单: 20单 | 评分: 4.9</div>
+                    </div>
+                    <div class="stats-ranking-score">¥160</div>
+                </div>
+
+                <!-- 当前排名 -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-position">5</div>
+                    <div class="stats-ranking-info">
+                        <div class="stats-ranking-name">我的排名</div>
+                        <div class="stats-ranking-value">今日订单: 16单 | 评分: 4.9</div>
+                    </div>
+                    <div class="stats-ranking-score">¥128</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="rider-bottom-nav">
+        <div class="rider-bottom-nav-item">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="rider-bottom-nav-text">订单</div>
+        </div>
+        <div class="rider-bottom-nav-item active">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="rider-bottom-nav-text">统计</div>
+        </div>
+        <div class="rider-bottom-nav-item">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="rider-bottom-nav-text">我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 时间筛选切换
+        document.querySelectorAll('.stats-time-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.stats-time-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加切换数据的逻辑
+            });
+        });
+        
+        // 底部导航切换
+        document.querySelectorAll('.rider-bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.rider-bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加页面跳转逻辑
+                const index = Array.from(document.querySelectorAll('.rider-bottom-nav-item')).indexOf(this);
+                if (index === 0) {
+                    window.location.href = 'rider-orders.html';
+                } else if (index === 1) {
+                    window.location.href = 'rider-stats.html';
+                } else if (index === 2) {
+                    window.location.href = 'rider-profile.html';
+                }
+            });
+        });
+        
+        // 收入趋势图表
+        const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+        const incomeChart = new Chart(incomeCtx, {
+            type: 'line',
+            data: {
+                labels: ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [{
+                    label: '收入',
+                    data: [20, 32, 16, 24, 18, 22, 16],
+                    backgroundColor: 'rgba(255, 90, 95, 0.2)',
+                    borderColor: 'rgba(255, 90, 95, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // 订单统计图表
+        const orderCtx = document.getElementById('orderChart').getContext('2d');
+        const orderChart = new Chart(orderCtx, {
+            type: 'bar',
+            data: {
+                labels: ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [{
+                    label: '订单数',
+                    data: [2, 4, 2, 3, 2, 2, 1],
+                    backgroundColor: 'rgba(255, 90, 95, 0.7)',
+                    borderWidth: 0,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

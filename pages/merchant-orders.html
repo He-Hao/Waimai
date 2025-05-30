@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单管理 - 商家端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .merchant-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .merchant-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .merchant-nav-menu {
+            font-size: 20px;
+        }
+        
+        .merchant-tabs {
+            display: flex;
+            background-color: white;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+            border-bottom: 1px solid #eee;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .merchant-tab {
+            padding: 15px;
+            color: var(--dark-gray);
+            position: relative;
+            font-size: 14px;
+        }
+        
+        .merchant-tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .merchant-tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .merchant-order-card {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .merchant-order-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .merchant-order-id {
+            font-weight: 600;
+        }
+        
+        .merchant-order-time {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .merchant-order-status {
+            color: var(--primary-color);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .merchant-order-body {
+            padding: 15px;
+        }
+        
+        .merchant-order-customer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .merchant-order-customer-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: var(--dark-gray);
+        }
+        
+        .merchant-order-customer-info {
+            flex: 1;
+        }
+        
+        .merchant-order-customer-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .merchant-order-customer-address {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .merchant-order-items {
+            margin-bottom: 15px;
+        }
+        
+        .merchant-order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .merchant-order-item-name {
+            flex: 1;
+        }
+        
+        .merchant-order-item-quantity {
+            margin-right: 15px;
+            color: var(--dark-gray);
+        }
+        
+        .merchant-order-item-price {
+            font-weight: 600;
+        }
+        
+        .merchant-order-total {
+            display: flex;
+            justify-content: flex-end;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .merchant-order-total span {
+            color: var(--primary-color);
+        }
+        
+        .merchant-order-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .merchant-order-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--dark-gray);
+            color: var(--dark-gray);
+            background-color: white;
+        }
+        
+        .btn-primary-outline {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: white;
+        }
+        
+        .btn-primary-solid {
+            border: 1px solid var(--primary-color);
+            color: white;
+            background-color: var(--primary-color);
+        }
+        
+        .merchant-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .merchant-bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--dark-gray);
+        }
+        
+        .merchant-bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .merchant-bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .merchant-bottom-nav-text {
+            font-size: 12px;
+        }
+        
+        .merchant-order-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .merchant-empty-orders {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+            color: var(--dark-gray);
+        }
+        
+        .merchant-empty-orders i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--medium-gray);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 商家导航栏 -->
+    <div class="merchant-nav-bar">
+        <div class="merchant-nav-title">订单管理</div>
+        <div class="merchant-nav-menu">
+            <i class="fas fa-bell"></i>
+        </div>
+    </div>
+
+    <!-- 订单标签页 -->
+    <div class="merchant-tabs">
+        <div class="merchant-tab active">全部</div>
+        <div class="merchant-tab">新订单 <span class="merchant-order-badge">2</span></div>
+        <div class="merchant-tab">备餐中</div>
+        <div class="merchant-tab">配送中</div>
+        <div class="merchant-tab">已完成</div>
+        <div class="merchant-tab">已取消</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content" style="margin-bottom: 60px;">
+        <!-- 订单列表 -->
+        <div class="merchant-order-list p-3">
+            <!-- 订单1 -->
+            <div class="merchant-order-card">
+                <div class="merchant-order-header">
+                    <div class="merchant-order-id">订单号: 2025053012345678</div>
+                    <div class="merchant-order-status">新订单</div>
+                </div>
+                <div class="merchant-order-body">
+                    <div class="merchant-order-time">
+                        <i class="fas fa-clock me-1"></i> 下单时间: 2025-05-30 14:00
+                    </div>
+                    <hr>
+                    <div class="merchant-order-customer">
+                        <div class="merchant-order-customer-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="merchant-order-customer-info">
+                            <div class="merchant-order-customer-name">张三 (先生) 138****1234</div>
+                            <div class="merchant-order-customer-address">北京市朝阳区望京SOHO T1 C座 10层 1001室</div>
+                        </div>
+                    </div>
+                    <div class="merchant-order-items">
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">麻婆豆腐</div>
+                            <div class="merchant-order-item-quantity">x1</div>
+                            <div class="merchant-order-item-price">¥28</div>
+                        </div>
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">水煮鱼片</div>
+                            <div class="merchant-order-item-quantity">x1</div>
+                            <div class="merchant-order-item-price">¥58</div>
+                        </div>
+                    </div>
+                    <div class="merchant-order-total">
+                        合计: <span class="ms-2">¥86</span>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fas fa-info-circle me-1"></i> 备注: 少放辣椒，多加点醋
+                    </div>
+                </div>
+                <div class="merchant-order-footer">
+                    <button class="merchant-order-btn btn-outline">拒绝接单</button>
+                    <button class="merchant-order-btn btn-primary-solid">接受订单</button>
+                </div>
+            </div>
+
+            <!-- 订单2 -->
+            <div class="merchant-order-card">
+                <div class="merchant-order-header">
+                    <div class="merchant-order-id">订单号: 2025053012345679</div>
+                    <div class="merchant-order-status">新订单</div>
+                </div>
+                <div class="merchant-order-body">
+                    <div class="merchant-order-time">
+                        <i class="fas fa-clock me-1"></i> 下单时间: 2025-05-30 14:10
+                    </div>
+                    <hr>
+                    <div class="merchant-order-customer">
+                        <div class="merchant-order-customer-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="merchant-order-customer-info">
+                            <div class="merchant-order-customer-name">李四 (先生) 139****5678</div>
+                            <div class="merchant-order-customer-address">北京市海淀区中关村大街1号</div>
+                        </div>
+                    </div>
+                    <div class="merchant-order-items">
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">回锅肉</div>
+                            <div class="merchant-order-item-quantity">x1</div>
+                            <div class="merchant-order-item-price">¥42</div>
+                        </div>
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">宫保鸡丁</div>
+                            <div class="merchant-order-item-quantity">x1</div>
+                            <div class="merchant-order-item-price">¥38</div>
+                        </div>
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">米饭</div>
+                            <div class="merchant-order-item-quantity">x2</div>
+                            <div class="merchant-order-item-price">¥4</div>
+                        </div>
+                    </div>
+                    <div class="merchant-order-total">
+                        合计: <span class="ms-2">¥88</span>
+                    </div>
+                </div>
+                <div class="merchant-order-footer">
+                    <button class="merchant-order-btn btn-outline">拒绝接单</button>
+                    <button class="merchant-order-btn btn-primary-solid">接受订单</button>
+                </div>
+            </div>
+
+            <!-- 订单3 -->
+            <div class="merchant-order-card">
+                <div class="merchant-order-header">
+                    <div class="merchant-order-id">订单号: 2025053012345677</div>
+                    <div class="merchant-order-status">备餐中</div>
+                </div>
+                <div class="merchant-order-body">
+                    <div class="merchant-order-time">
+                        <i class="fas fa-clock me-1"></i> 下单时间: 2025-05-30 13:45
+                    </div>
+                    <hr>
+                    <div class="merchant-order-customer">
+                        <div class="merchant-order-customer-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="merchant-order-customer-info">
+                            <div class="merchant-order-customer-name">王五 (先生) 135****9012</div>
+                            <div class="merchant-order-customer-address">北京市朝阳区建国路88号</div>
+                        </div>
+                    </div>
+                    <div class="merchant-order-items">
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">辣子鸡</div>
+                            <div class="merchant-order-item-quantity">x1</div>
+                            <div class="merchant-order-item-price">¥48</div>
+                        </div>
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">酸菜鱼</div>
+                            <div class="merchant-order-item-quantity">x1</div>
+                            <div class="merchant-order-item-price">¥56</div>
+                        </div>
+                        <div class="merchant-order-item">
+                            <div class="merchant-order-item-name">米饭</div>
+                            <div class="merchant-order-item-quantity">x2</div>
+                            <div class="merchant-order-item-price">¥4</div>
+                        </div>
+                    </div>
+                    <div class="merchant-order-total">
+                        合计: <span class="ms-2">¥112</span>
+                    </div>
+                </div>
+                <div class="merchant-order-footer">
+                    <button class="merchant-order-btn btn-primary-solid">备餐完成</button>
+                </div>
+            </div>
+
+            <!-- 空订单状态 (默认隐藏) -->
+            <div class="merchant-empty-orders" style="display: none;">
+                <i class="fas fa-clipboard-list"></i>
+                <p>暂无相关订单</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="merchant-bottom-nav">
+        <div class="merchant-bottom-nav-item active">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">订单</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">菜品</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">数据</div>
+        </div>
+        <div class="merchant-bottom-nav-item">
+            <div class="merchant-bottom-nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="merchant-bottom-nav-text">我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.merchant-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.merchant-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加切换订单列表的逻辑
+            });
+        });
+        
+        // 底部导航切换
+        document.querySelectorAll('.merchant-bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.merchant-bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加页面跳转逻辑
+            });
+        });
+    </script>
+</body>
+</html>

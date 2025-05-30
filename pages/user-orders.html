@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 用户端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .order-tabs {
+            display: flex;
+            background-color: white;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 5px;
+            color: var(--dark-gray);
+            font-size: 14px;
+            position: relative;
+            white-space: nowrap;
+        }
+        
+        .order-tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .order-tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .order-card {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .order-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-shop {
+            display: flex;
+            align-items: center;
+        }
+        
+        .order-shop-icon {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .order-shop-name {
+            font-weight: 600;
+        }
+        
+        .order-status {
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+        
+        .order-body {
+            padding: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .order-item-info {
+            flex: 1;
+        }
+        
+        .order-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .order-item-price {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .order-item-quantity {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .order-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-total {
+            font-size: 14px;
+        }
+        
+        .order-total span {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .order-action-btn {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--dark-gray);
+            color: var(--dark-gray);
+            background-color: white;
+        }
+        
+        .btn-primary-outline {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: white;
+        }
+        
+        .btn-primary-solid {
+            border: 1px solid var(--primary-color);
+            color: white;
+            background-color: var(--primary-color);
+        }
+        
+        .empty-order {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        
+        .empty-order i {
+            font-size: 60px;
+            color: var(--medium-gray);
+            margin-bottom: 20px;
+        }
+        
+        .empty-order p {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+        
+        .empty-order .go-shopping {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <div class="title">我的订单</div>
+    </div>
+
+    <!-- 订单标签页 -->
+    <div class="order-tabs">
+        <div class="order-tab active">全部</div>
+        <div class="order-tab">待付款</div>
+        <div class="order-tab">待配送</div>
+        <div class="order-tab">配送中</div>
+        <div class="order-tab">已完成</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 订单列表 -->
+        <div class="order-list">
+            <!-- 订单1 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-shop">
+                        <div class="order-shop-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="order-shop-name">川湘居</div>
+                    </div>
+                    <div class="order-status">配送中</div>
+                </div>
+                <div class="order-body">
+                    <div class="order-item">
+                        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                        <div class="order-item-info">
+                            <div class="order-item-title">麻婆豆腐</div>
+                            <div class="order-item-price">¥28</div>
+                            <div class="order-item-quantity">x1</div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                        <div class="order-item-info">
+                            <div class="order-item-title">水煮鱼片</div>
+                            <div class="order-item-price">¥58</div>
+                            <div class="order-item-quantity">x1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-total">
+                        共2件商品 合计: <span>¥86</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-action-btn btn-outline">联系商家</button>
+                        <button class="order-action-btn btn-primary-outline">查看物流</button>
+                        <button class="order-action-btn btn-primary-solid">确认收货</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 订单2 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-shop">
+                        <div class="order-shop-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="order-shop-name">星巴克咖啡</div>
+                    </div>
+                    <div class="order-status">待配送</div>
+                </div>
+                <div class="order-body">
+                    <div class="order-item">
+                        <img src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                        <div class="order-item-info">
+                            <div class="order-item-title">拿铁咖啡</div>
+                            <div class="order-item-price">¥32</div>
+                            <div class="order-item-quantity">x1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-total">
+                        共1件商品 合计: <span>¥32</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-action-btn btn-outline">联系商家</button>
+                        <button class="order-action-btn btn-primary-outline">取消订单</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 订单3 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-shop">
+                        <div class="order-shop-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="order-shop-name">粤香阁</div>
+                    </div>
+                    <div class="order-status">已完成</div>
+                </div>
+                <div class="order-body">
+                    <div class="order-item">
+                        <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                        <div class="order-item-info">
+                            <div class="order-item-title">白切鸡</div>
+                            <div class="order-item-price">¥48</div>
+                            <div class="order-item-quantity">x1</div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="order-item-image" alt="商品图片">
+                        <div class="order-item-info">
+                            <div class="order-item-title">清蒸鱼</div>
+                            <div class="order-item-price">¥68</div>
+                            <div class="order-item-quantity">x1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-total">
+                        共2件商品 合计: <span>¥116</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-action-btn btn-outline">删除订单</button>
+                        <button class="order-action-btn btn-primary-outline">再来一单</button>
+                        <button class="order-action-btn btn-primary-solid">评价</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 空订单状态 (默认隐藏) -->
+            <div class="empty-order" style="display: none;">
+                <i class="fas fa-file-alt"></i>
+                <p>暂无相关订单</p>
+                <div class="go-shopping">去购物</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部标签栏 -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <i class="fas fa-home"></i>
+            <div>首页</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-compass"></i>
+            <div>发现</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-shopping-cart"></i>
+            <div>购物车</div>
+        </div>
+        <div class="tab-item active">
+            <i class="fas fa-file-alt"></i>
+            <div>订单</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-user"></i>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.order-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加切换订单列表的逻辑
+            });
+        });
+    </script>
+</body>
+</html>

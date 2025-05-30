@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 - 骑手端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .rider-nav-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .rider-nav-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .rider-nav-menu {
+            font-size: 20px;
+        }
+        
+        .rider-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .rider-bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--dark-gray);
+        }
+        
+        .rider-bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .rider-bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .rider-bottom-nav-text {
+            font-size: 12px;
+        }
+        
+        .profile-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            margin-right: 15px;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .profile-rating i {
+            color: #FFD700;
+            margin-right: 5px;
+        }
+        
+        .profile-status {
+            display: inline-block;
+            padding: 2px 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .profile-menu-section {
+            background-color: white;
+            border-radius: 10px;
+            margin: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .profile-menu-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+        
+        .profile-menu-text {
+            flex: 1;
+        }
+        
+        .profile-menu-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .profile-menu-desc {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .profile-menu-arrow {
+            color: var(--dark-gray);
+        }
+        
+        .profile-status-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: white;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .profile-status-text {
+            font-weight: 600;
+        }
+        
+        .profile-status-text span {
+            color: var(--primary-color);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .logout-btn {
+            display: block;
+            margin: 15px;
+            padding: 12px;
+            text-align: center;
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .profile-stats {
+            display: flex;
+            background-color: white;
+            border-radius: 10px;
+            margin: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .profile-stats-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            border-right: 1px solid #eee;
+        }
+        
+        .profile-stats-item:last-child {
+            border-right: none;
+        }
+        
+        .profile-stats-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .profile-stats-label {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 骑手导航栏 -->
+    <div class="rider-nav-bar">
+        <div class="rider-nav-title">我的</div>
+        <div class="rider-nav-menu">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content" style="margin-bottom: 60px;">
+        <!-- 个人信息头部 -->
+        <div class="profile-header">
+            <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="profile-avatar" alt="骑手头像">
+            <div class="profile-info">
+                <div class="profile-name">赵师傅</div>
+                <div class="profile-rating">
+                    <i class="fas fa-star"></i>
+                    <span>4.9 (1200+ 评价)</span>
+                </div>
+                <div class="profile-status">接单中</div>
+            </div>
+        </div>
+
+        <!-- 骑手统计 -->
+        <div class="profile-stats">
+            <div class="profile-stats-item">
+                <div class="profile-stats-value">1,286</div>
+                <div class="profile-stats-label">总单数</div>
+            </div>
+            <div class="profile-stats-item">
+                <div class="profile-stats-value">98%</div>
+                <div class="profile-stats-label">完成率</div>
+            </div>
+            <div class="profile-stats-item">
+                <div class="profile-stats-value">¥12,580</div>
+                <div class="profile-stats-label">总收入</div>
+            </div>
+        </div>
+
+        <!-- 接单状态切换 -->
+        <div class="profile-status-toggle">
+            <div class="profile-status-text">
+                接单状态: <span>接单中</span>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <!-- 账户管理 -->
+        <div class="profile-menu-section">
+            <div class="profile-menu-header">
+                账户管理
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">个人信息</div>
+                    <div class="profile-menu-desc">修改头像、姓名、联系方式等</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">收款账户</div>
+                    <div class="profile-menu-desc">管理收款账户和提现设置</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">账户安全</div>
+                    <div class="profile-menu-desc">修改密码、绑定手机等</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配送管理 -->
+        <div class="profile-menu-section">
+            <div class="profile-menu-header">
+                配送管理
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">配送区域</div>
+                    <div class="profile-menu-desc">设置接单区域范围</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">工作时间</div>
+                    <div class="profile-menu-desc">设置接单时间段</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">车辆信息</div>
+                    <div class="profile-menu-desc">管理车辆信息和维护记录</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 帮助与客服 -->
+        <div class="profile-menu-section">
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">联系客服</div>
+                    <div class="profile-menu-desc">有问题联系我们的客服团队</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">帮助中心</div>
+                    <div class="profile-menu-desc">查看常见问题和使用指南</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="profile-menu-item">
+                <div class="profile-menu-icon">
+                    <i class="fas fa-comment-alt"></i>
+                </div>
+                <div class="profile-menu-text">
+                    <div class="profile-menu-title">意见反馈</div>
+                    <div class="profile-menu-desc">提交您的建议和反馈</div>
+                </div>
+                <div class="profile-menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 退出登录 -->
+        <a href="rider-login.html" class="logout-btn">
+            退出登录
+        </a>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="rider-bottom-nav">
+        <div class="rider-bottom-nav-item">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="rider-bottom-nav-text">订单</div>
+        </div>
+        <div class="rider-bottom-nav-item">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="rider-bottom-nav-text">统计</div>
+        </div>
+        <div class="rider-bottom-nav-item active">
+            <div class="rider-bottom-nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="rider-bottom-nav-text">我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 底部导航切换
+        document.querySelectorAll('.rider-bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.rider-bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 这里可以添加页面跳转逻辑
+                const index = Array.from(document.querySelectorAll('.rider-bottom-nav-item')).indexOf(this);
+                if (index === 0) {
+                    window.location.href = 'rider-orders.html';
+                } else if (index === 1) {
+                    window.location.href = 'rider-stats.html';
+                } else if (index === 2) {
+                    window.location.href = 'rider-profile.html';
+                }
+            });
+        });
+        
+        // 接单状态切换
+        document.querySelector('.toggle-switch input').addEventListener('change', function() {
+            const statusText = document.querySelector('.profile-status-text span');
+            const statusBadge = document.querySelector('.profile-status');
+            
+            if (this.checked) {
+                statusText.textContent = '接单中';
+                statusBadge.textContent = '接单中';
+            } else {
+                statusText.textContent = '休息中';
+                statusBadge.textContent = '休息中';
+            }
+        });
+        
+        // 菜单项点击
+        document.querySelectorAll('.profile-menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const title = this.querySelector('.profile-menu-title').textContent;
+                alert(`跳转到${title}页面`);
+            });
+        });
+    </script>
+</body>
+</html>

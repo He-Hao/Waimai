@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结算 - 用户端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .checkout-section {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .checkout-section-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .checkout-section-body {
+            padding: 15px;
+        }
+        
+        .checkout-address {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .checkout-address-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+        
+        .checkout-address-info {
+            flex: 1;
+        }
+        
+        .checkout-address-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .checkout-address-detail {
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .checkout-address-phone {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .checkout-address-arrow {
+            color: var(--dark-gray);
+            margin-left: 10px;
+        }
+        
+        .checkout-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .checkout-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .checkout-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .checkout-item-info {
+            flex: 1;
+        }
+        
+        .checkout-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .checkout-item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .checkout-item-quantity {
+            color: var(--dark-gray);
+            font-size: 14px;
+            text-align: right;
+        }
+        
+        .checkout-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        
+        .checkout-option-label {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkout-option-icon {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .checkout-option-value {
+            color: var(--dark-gray);
+        }
+        
+        .checkout-option-arrow {
+            color: var(--dark-gray);
+        }
+        
+        .checkout-remark {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkout-remark-label {
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        
+        .checkout-remark-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            color: var(--dark-gray);
+        }
+        
+        .checkout-summary {
+            padding: 15px;
+        }
+        
+        .checkout-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .checkout-summary-item:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+        }
+        
+        .checkout-summary-label {
+            color: var(--dark-gray);
+        }
+        
+        .checkout-summary-value {
+            font-weight: 600;
+        }
+        
+        .checkout-summary-total {
+            color: var(--primary-color);
+        }
+        
+        .checkout-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .checkout-footer-total {
+            font-weight: 600;
+        }
+        
+        .checkout-footer-total span {
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+        
+        .checkout-footer-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <div class="left">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="title">确认订单</div>
+        <div class="right"></div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content" style="margin-bottom: 80px;">
+        <!-- 收货地址 -->
+        <div class="checkout-section">
+            <div class="checkout-section-body">
+                <div class="checkout-address">
+                    <div class="checkout-address-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="checkout-address-info">
+                        <div class="checkout-address-name">张三 (先生)</div>
+                        <div class="checkout-address-phone">138****1234</div>
+                        <div class="checkout-address-detail">北京市朝阳区望京SOHO T1 C座 10层 1001室</div>
+                    </div>
+                    <div class="checkout-address-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品信息 -->
+        <div class="checkout-section">
+            <div class="checkout-section-header">
+                <i class="fas fa-store text-primary me-2"></i> 川湘居
+            </div>
+            <div class="checkout-section-body">
+                <!-- 商品1 -->
+                <div class="checkout-item">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="checkout-item-image" alt="商品图片">
+                    <div class="checkout-item-info">
+                        <div class="checkout-item-title">麻婆豆腐</div>
+                        <div class="checkout-item-price">¥28</div>
+                    </div>
+                    <div class="checkout-item-quantity">
+                        x1
+                    </div>
+                </div>
+                <!-- 商品2 -->
+                <div class="checkout-item">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="checkout-item-image" alt="商品图片">
+                    <div class="checkout-item-info">
+                        <div class="checkout-item-title">水煮鱼片</div>
+                        <div class="checkout-item-price">¥58</div>
+                    </div>
+                    <div class="checkout-item-quantity">
+                        x1
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配送方式 -->
+        <div class="checkout-section">
+            <div class="checkout-section-body">
+                <div class="checkout-option">
+                    <div class="checkout-option-label">
+                        <div class="checkout-option-icon">
+                            <i class="fas fa-motorcycle"></i>
+                        </div>
+                        <div>配送方式</div>
+                    </div>
+                    <div class="checkout-option-value">
+                        美团专送 <i class="fas fa-chevron-right checkout-option-arrow"></i>
+                    </div>
+                </div>
+                <div class="checkout-option">
+                    <div class="checkout-option-label">
+                        <div class="checkout-option-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>送达时间</div>
+                    </div>
+                    <div class="checkout-option-value">
+                        尽快送达 (约30分钟) <i class="fas fa-chevron-right checkout-option-arrow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 支付方式 -->
+        <div class="checkout-section">
+            <div class="checkout-section-body">
+                <div class="checkout-option">
+                    <div class="checkout-option-label">
+                        <div class="checkout-option-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div>支付方式</div>
+                    </div>
+                    <div class="checkout-option-value">
+                        微信支付 <i class="fas fa-chevron-right checkout-option-arrow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 优惠券 -->
+        <div class="checkout-section">
+            <div class="checkout-section-body">
+                <div class="checkout-option">
+                    <div class="checkout-option-label">
+                        <div class="checkout-option-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div>优惠券</div>
+                    </div>
+                    <div class="checkout-option-value">
+                        满30减5 <i class="fas fa-chevron-right checkout-option-arrow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单备注 -->
+        <div class="checkout-section">
+            <div class="checkout-section-body">
+                <div class="checkout-remark">
+                    <div class="checkout-remark-label">订单备注</div>
+                    <input type="text" class="checkout-remark-input" placeholder="口味、偏好等要求">
+                </div>
+            </div>
+        </div>
+
+        <!-- 费用明细 -->
+        <div class="checkout-section">
+            <div class="checkout-summary">
+                <div class="checkout-summary-item">
+                    <div class="checkout-summary-label">商品金额</div>
+                    <div class="checkout-summary-value">¥86</div>
+                </div>
+                <div class="checkout-summary-item">
+                    <div class="checkout-summary-label">配送费</div>
+                    <div class="checkout-summary-value">¥5</div>
+                </div>
+                <div class="checkout-summary-item">
+                    <div class="checkout-summary-label">优惠券</div>
+                    <div class="checkout-summary-value">-¥5</div>
+                </div>
+                <div class="checkout-summary-item">
+                    <div class="checkout-summary-label">实付金额</div>
+                    <div class="checkout-summary-value checkout-summary-total">¥86</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结算底部 -->
+    <div class="checkout-footer">
+        <div class="checkout-footer-total">
+            合计: <span>¥86</span>
+        </div>
+        <div class="checkout-footer-btn">
+            提交订单
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

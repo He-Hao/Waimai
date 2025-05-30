@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索 - 用户端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .search-history-item, .hot-search-item {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: var(--light-gray);
+            border-radius: 15px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        
+        .search-section {
+            margin-bottom: 20px;
+        }
+        
+        .search-section-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .search-section-title h6 {
+            font-weight: 600;
+        }
+        
+        .search-section-title .action {
+            color: var(--dark-gray);
+            font-size: 12px;
+        }
+        
+        .search-result-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+        
+        .search-result-tab {
+            padding: 10px 15px;
+            font-size: 14px;
+            color: var(--dark-gray);
+            position: relative;
+        }
+        
+        .search-result-tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .search-result-tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="time">14:30</div>
+        <div class="icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- 搜索栏 -->
+    <div class="nav-bar">
+        <div class="left">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="search-bar" style="flex: 1; margin-bottom: 0;">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="搜索商家、商品名称" autofocus>
+        </div>
+        <div class="right">
+            <span style="color: var(--primary-color);">搜索</span>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 搜索历史 -->
+        <div class="search-section">
+            <div class="search-section-title">
+                <h6>搜索历史</h6>
+                <div class="action">
+                    <i class="fas fa-trash-alt"></i> 清除
+                </div>
+            </div>
+            <div class="search-history-list">
+                <div class="search-history-item">川湘居</div>
+                <div class="search-history-item">麻辣香锅</div>
+                <div class="search-history-item">奶茶</div>
+                <div class="search-history-item">水果</div>
+                <div class="search-history-item">星巴克</div>
+            </div>
+        </div>
+
+        <!-- 热门搜索 -->
+        <div class="search-section">
+            <div class="search-section-title">
+                <h6>热门搜索</h6>
+            </div>
+            <div class="hot-search-list">
+                <div class="hot-search-item">麻辣烫</div>
+                <div class="hot-search-item">奶茶</div>
+                <div class="hot-search-item">炸鸡</div>
+                <div class="hot-search-item">火锅</div>
+                <div class="hot-search-item">披萨</div>
+                <div class="hot-search-item">寿司</div>
+                <div class="hot-search-item">蛋糕</div>
+                <div class="hot-search-item">便当</div>
+            </div>
+        </div>
+
+        <!-- 搜索结果 (默认隐藏，搜索后显示) -->
+        <div class="search-results" style="display: none;">
+            <div class="search-result-tabs">
+                <div class="search-result-tab active">商家 (10)</div>
+                <div class="search-result-tab">商品 (25)</div>
+            </div>
+            
+            <!-- 商家搜索结果 -->
+            <div class="shop-list">
+                <!-- 商家1 -->
+                <div class="shop-item">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                    <div class="shop-info">
+                        <div class="shop-title">川湘居</div>
+                        <div class="shop-desc">川菜 | 人均¥45 | 30分钟送达</div>
+                        <div class="shop-rating">
+                            <i class="fas fa-star"></i>
+                            <span>4.8</span>
+                            <span class="ml-2">月售2000+</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商家2 -->
+                <div class="shop-item">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                    <div class="shop-info">
+                        <div class="shop-title">川西坝子</div>
+                        <div class="shop-desc">川菜 | 人均¥55 | 35分钟送达</div>
+                        <div class="shop-rating">
+                            <i class="fas fa-star"></i>
+                            <span>4.6</span>
+                            <span class="ml-2">月售1500+</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商家3 -->
+                <div class="shop-item">
+                    <img src="https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                    <div class="shop-info">
+                        <div class="shop-title">川味轩</div>
+                        <div class="shop-desc">川菜 | 人均¥40 | 25分钟送达</div>
+                        <div class="shop-rating">
+                            <i class="fas fa-star"></i>
+                            <span>4.5</span>
+                            <span class="ml-2">月售1200+</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商家4 -->
+                <div class="shop-item">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="shop-image" alt="商家图片">
+                    <div class="shop-info">
+                        <div class="shop-title">小川菜馆</div>
+                        <div class="shop-desc">川菜 | 人均¥35 | 20分钟送达</div>
+                        <div class="shop-rating">
+                            <i class="fas fa-star"></i>
+                            <span>4.4</span>
+                            <span class="ml-2">月售1000+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部标签栏 -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <i class="fas fa-home"></i>
+            <div>首页</div>
+        </div>
+        <div class="tab-item active">
+            <i class="fas fa-compass"></i>
+            <div>发现</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-shopping-cart"></i>
+            <div>购物车</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-file-alt"></i>
+            <div>订单</div>
+        </div>
+        <div class="tab-item">
+            <i class="fas fa-user"></i>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 模拟搜索功能
+        document.querySelector('.search-bar input').addEventListener('focus', function() {
+            document.querySelector('.search-results').style.display = 'none';
+        });
+        
+        document.querySelector('.right span').addEventListener('click', function() {
+            document.querySelector('.search-results').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
